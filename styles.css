@@ -463,3 +463,36 @@ input:focus, select:focus{
   .aboutGrid{ grid-template-columns: 1fr; }
   .tilesGrid{ grid-template-columns: 1fr; }
 }
+
+/* Loading stanje za submit dugme */
+.btn.is-loading {
+  position: relative;
+  pointer-events: none; /* dodatno osiguranje */
+  opacity: 0.9;
+  padding-right: 44px; /* mjesto za spinner */
+}
+
+/* spinner */
+.btn.is-loading::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,.55);
+  border-top-color: rgba(255,255,255,1);
+  animation: btnSpin 0.8s linear infinite;
+}
+
+@keyframes btnSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Ako je ghost dugme, spinner neka bude plav (da se vidi na svijetloj pozadini) */
+.btn--ghost.is-loading::after {
+  border-color: rgba(29,78,216,.35);
+  border-top-color: rgba(29,78,216,1);
+}
