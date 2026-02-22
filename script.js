@@ -212,9 +212,13 @@ if (form) {
       return;
     }
 
+const submitBtn = form.querySelector('button[type="submit"]');
+const oldText = submitBtn ? submitBtn.textContent : "";
+
     // UI stanje
     if (submitBtn) {
       submitBtn.disabled = true;
+      submitBtn.classList.add("is-loading");
       submitBtn.textContent = "Slanje...";
     }
     showAlert("Slanje prijave... sačekajte trenutak.", "success");
@@ -239,6 +243,7 @@ if (form) {
       .finally(() => {
         if (submitBtn) {
           submitBtn.disabled = false;
+          submitBtn.classList.remove("is-loading");
           submitBtn.textContent = submitBtnText;
         }
       });
