@@ -1,232 +1,308 @@
-// ===== Helpers =====
-const $ = (sel, root = document) => root.querySelector(sel);
-const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-
-// ===== Year =====
-const yearEl = $("#year");
-if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-// ===== Mobile nav =====
-const burger = $("#burger");
-const mobileNav = $("#mobileNav");
-
-if (burger && mobileNav) {
-  burger.addEventListener("click", () => {
-    const expanded = burger.getAttribute("aria-expanded") === "true";
-    burger.setAttribute("aria-expanded", String(!expanded));
-    mobileNav.hidden = expanded;
+<!doctype html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zdravlje i Njega | Crna Gora</title>
+  <meta name="description" content="Profesionalne usluge čuvanja i njege starijih osoba u Crnoj Gori. Prijava termina online." />
+  <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+  <link rel="stylesheet" href="styles.css" />
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    emailjs.init("DbStsEKPQeItGFnEm");
   });
+</script>
+</head>
 
-  $$(".mobileNav__link").forEach((link) => {
-    link.addEventListener("click", () => {
-      burger.setAttribute("aria-expanded", "false");
-      mobileNav.hidden = true;
-    });
-  });
-}
+<body>
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="container topbar__inner">
+      <span class="topbar__note"></span>
+      <div class="topbar__contacts">
+        <a class="topbar__link" href="tel:+38268110564" aria-label="Pozovi telefon">+382 68 110 564</a>
+        <span class="dot">•</span>
+        <a class="topbar__link" href="mailto:zdravljenjega@gmail.com" aria-label="Pošalji email">zdravljenjega@gmail.com</a>
+      </div>
+    </div>
+  </div>
 
-// ===== Active tab highlighting on scroll =====
-const navLinks = $$(".nav__link");
-const sections = ["pocetna", "prijava", "o-nama"]
-  .map((id) => document.getElementById(id))
-  .filter(Boolean);
+  <!-- Header -->
+  <header class="header" id="vrh">
+    <div class="container header__inner">
+      <a class="brand" href="#pocetna" aria-label="Početna">
+        <img src="logo.png" alt="Zdravlje i Njega - logo" class="brand__logo" />
+        <span class="brand__text">
+          <strong>Zdravlje i Njega</strong>
+        </span>
+      </a>
 
-const setActive = (id) => {
-  navLinks.forEach((a) => a.classList.toggle("is-active", a.dataset.nav === id));
-};
+      <nav class="nav" aria-label="Glavna navigacija">
+        <a class="nav__link is-active" href="#pocetna" data-nav="pocetna">Početna</a>
+        <a class="nav__link" href="#prijava" data-nav="prijava">Prijava</a>
+        <a class="nav__link" href="#o-nama" data-nav="o-nama">O nama</a>
+      </nav>
 
-if (sections.length) {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((e) => e.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      <div class="header__cta">
+        <a class="btn btn--ghost" href="#o-nama">Kontakt</a>
+        <a class="btn" href="#prijava">Zakaži čuvanje</a>
+      </div>
 
-      if (visible?.target?.id) setActive(visible.target.id);
-    },
-    { threshold: [0.25, 0.4, 0.6] }
-  );
+      <button class="burger" id="burger" aria-label="Otvori meni" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
 
-  sections.forEach((s) => observer.observe(s));
-}
+    <div class="mobileNav" id="mobileNav" hidden>
+      <a class="mobileNav__link" href="#pocetna">Početna</a>
+      <a class="mobileNav__link" href="#prijava">Prijava</a>
+      <a class="mobileNav__link" href="#o-nama">O nama</a>
+      <div class="mobileNav__divider"></div>
+      <a class="mobileNav__link" href="tel:+38268110564">Pozovi: +382 68 110 564</a>
+      <a class="mobileNav__link" href="mailto:zdravljenjega@gmail.com">Email: zdravljenjega@gmail.com</a>
+    </div>
+  </header>
 
-// ===== Slider (LOCAL) =====
-const slides = [
-  { src: "images/slider/1.jpg", alt: "Njega starijih osoba" },
-  { src: "images/slider/2.jpg", alt: "Pomoć u kući i podrška" },
-  { src: "images/slider/3.jpg", alt: "Društvo i asistencija" },
-  { src: "images/slider/4.jpg", alt: "Medicinska briga i njega" },
-  { src: "images/slider/5.jpg", alt: "Medicinska briga i njega1" },
-];
+  <main>
+    <!-- POČETNA -->
+    <section class="section hero" id="pocetna">
+      <!-- Gornji dio: slider + tekst -->
+      <div class="container hero__grid">
+        <!-- Slider -->
+        <div class="slider" aria-label="Slider slika starijih osoba">
+          <div class="slider__frame">
+            <img id="sliderImage" class="slider__img" alt="Njega starijih osoba" />
+            <div class="slider__overlay">
+              <div class="badge">Sigurno • Pouzdano • Diskretno</div>
+            </div>
+          </div>
 
-let current = 0;
-const sliderImage = $("#sliderImage");
-const dotsWrap = $("#dots");
-const prevBtn = $("#prevSlide");
-const nextBtn = $("#nextSlide");
-const sliderRoot = $(".slider");
+          <div class="slider__controls">
+            <button class="iconBtn" id="prevSlide" aria-label="Prethodna slika">‹</button>
+            <div class="dots" id="dots" aria-label="Indikatori slajdova"></div>
+            <button class="iconBtn" id="nextSlide" aria-label="Sledeća slika">›</button>
+          </div>
+        </div>
 
-function preloadOne(url) {
-  const im = new Image();
-  im.src = url; // trigeruje download i keširanje u pozadini
-}
+        <!-- Text -->
+        <div class="hero__content">
+          <h1>Čuvanje i njega starijih osoba u Crnoj Gori</h1>
+          <p class="lead">
+            Organizujemo provjerene njegovatelje za pratnju, pomoć u kući i dnevnu njegu — od <strong>2 sata</strong> do <strong>čitavog dana</strong>.
+          </p>
 
-function renderDots() {
-  if (!dotsWrap) return;
-  dotsWrap.innerHTML = "";
+          <div class="hero__actions">
+            <a class="btn" href="#prijava">Popuni prijavu</a>
+            <a class="btn btn--ghost" href="#o-nama">Kontakt i lokacija</a>
+          </div>
+        </div>
+      </div>
 
-  slides.forEach((_, i) => {
-    const b = document.createElement("button");
-    b.className = "dotBtn" + (i === current ? " is-active" : "");
-    b.type = "button";
-    b.setAttribute("aria-label", `Idi na slajd ${i + 1}`);
-    b.addEventListener("click", () => goTo(i));
-    dotsWrap.appendChild(b);
-  });
-}
+      <!-- Donji dio: pločice ispod slidera (centrirane) -->
+      <div class="container">
+        <div class="tilesGrid">
+          <div class="tile">
+            <h3>Šta uključuje usluga</h3>
+            <ul class="list">
+              <li>Medicinske usluge</li>
+              <li>Njega i Pomoć starijim osobama</li>
+              <li>Društvo i Psihološka podrška</li>
+              <li>Pomoć u svakodnevnim obavezama</li>
+            </ul>
+          </div>
 
-function setActiveDot(index) {
-  if (!dotsWrap) return;
-  $$(".dotBtn", dotsWrap).forEach((d, i) => d.classList.toggle("is-active", i === index));
-}
+          <div class="tile">
+            <h3>Medicinske usluge</h3>
+            <ul class="list">
+              <li>Davanje infuzija</li>
+              <li>Davanje injekcija</li>
+              <li>Mjerenje vitalnih parametara</li>
+              <li>Previjanje i njega rane</li>
+              <li>Praćenje terapije prema preporuci ljekara</li>
+              <li>Dodatne medicinske usluge</li>
+            </ul>
+          </div>
 
-function showSlide(index) {
-  if (!sliderImage) return;
+          <div class="tile">
+            <h3>Pomoć i njega starijim osobama</h3>
+            <ul class="list">
+              <li>Kupanje i održavanje lične higijene</li>
+              <li>Presvlačenje i pomoć pri oblačenju</li>
+              <li>Pomoć pri kretanju i ustajanju</li>
+              <li>Njega nepokretnih osoba</li>
+              <li>Priprema lakših obroka i pomoć pri hranjenju</li>
+              <li>Nadzor i briga u domu</li>
+            </ul>
+          </div>
 
-  const slide = slides[index];
-  if (!slide) return;
+          <div class="tile">
+            <h3>Društvo i psihološka podrška</h3>
+            <ul class="list">
+              <li>Pravljenje društva starijim osobama</li>
+              <li>Razgovor i prisustvo</li>
+              <li>Podrška i ohrabrenje</li>
+              <li>Šetnje i lagane aktivnosti</li>
+              <li>Podrška osobama koje žive same</li>
+            </ul>
+          </div>
 
-  sliderImage.style.opacity = "0";
+          <div class="tile">
+            <h3>Pomoć u svakodnevnim obavezama</h3>
+            <ul class="list">
+              <li>Odlazak po lijekove i terapiju</li>
+              <li>Kupovina osnovnih namirnica</li>
+              <li>Odlazak kod ljekara ili na kontrole</li>
+              <li>Podsjećanje na terapiju</li>
+              <li>Pomoć u organizaciji svakodnevnog života</li>
+            </ul>
+          </div>
 
-  // ako želiš efekat fade, ostavi timeout; ako ne želiš, stavi 0
-  setTimeout(() => {
-    sliderImage.alt = slide.alt || "Njega starijih osoba";
-    sliderImage.src = slide.src;
+          <div class="tile">
+            <h3>Zašto odabrati nas ?</h3>
+            <ul class="list">
+              <li>Iskustvo u radu sa starijim osobama</li>
+              <li>Topao i human pristup</li>
+              <li>Njega u Vašem domu</li>
+              <li>Fleksibilni termini i dogovor</li>
+              <li>Brza komunikacija, diskrecija i povjerenje</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    sliderImage.onload = () => {
-      sliderImage.style.opacity = "1";
-    };
+    <!-- PRIJAVA -->
+    <section class="section" id="prijava">
+      <div class="container">
+        <div class="section__head">
+          <h2>Prijava (forma)</h2>
+          <p>Popuni podatke i dobićeš potvrdu na email/telefon.</p>
+        </div>
 
-    sliderImage.onerror = () => {
-      // fallback ako lokalna slika ne postoji / putanja nije dobra
-      sliderImage.style.opacity = "1";
-      sliderImage.alt = "Njega starijih osoba";
-      sliderImage.src = "images/slider/fallback.jpg";
-    };
+        <div class="panel">
+          <form id="requestForm" class="form" novalidate>
+            <div class="grid">
+              <div class="field">
+                <label for="ime">Ime osobe koja treba da se čuva</label>
+                <input id="ime" name="ime" type="text" placeholder="Ovdje unesite ime" autocomplete="off" required />
+                <small class="hint">Obavezno polje</small>
+              </div>
 
-    setActiveDot(index);
+              <div class="field">
+                <label for="prezime">Prezime osobe</label>
+                <input id="prezime" name="prezime" type="text" placeholder="Ovdje unesite prezime" autocomplete="off" required />
+                <small class="hint">Obavezno polje</small>
+              </div>
 
-    // Preload samo sledeću + prethodnu (ne sve)
-    const next = slides[(index + 1) % slides.length]?.src;
-    const prev = slides[(index - 1 + slides.length) % slides.length]?.src;
-    if (next) preloadOne(next);
-    if (prev) preloadOne(prev);
-  }, 160);
-}
+              <div class="field">
+                <label for="trajanje">Koliko sati čuvanja</label>
+                <select id="trajanje" name="trajanje" required>
+                  <option value="" selected disabled>Izaberi trajanje</option>
+                  <option value="2">2 sata</option>
+                  <option value="4">4 sata</option>
+                  <option value="6">6 sati</option>
+                  <option value="8">8 sati</option>
+                  <option value="12">12 sati</option>
+                  <option value="24">Čitav dan</option>
+                </select>
+                <small class="hint">Obavezno polje</small>
+              </div>
 
-function goTo(index) {
-  current = (index + slides.length) % slides.length;
-  showSlide(current);
-}
+              <div class="field">
+                <label for="datum">Izbor datuma</label>
+                <input id="datum" name="datum" type="date" required />
+                <small class="hint">Obavezno polje</small>
+              </div>
 
-if (prevBtn) prevBtn.addEventListener("click", () => goTo(current - 1));
-if (nextBtn) nextBtn.addEventListener("click", () => goTo(current + 1));
+              <div class="field">
+                <label for="telefon">Kontakt telefon</label>
+                <input id="telefon" name="telefon" type="tel" placeholder="+382 6X XXX XXX" required />
+                <small class="hint">Obavezno polje</small>
+              </div>
 
-// init
-renderDots();
-showSlide(current);
+              <div class="field">
+                <label for="email">Mail adresa</label>
+                <input id="email" name="email" type="email" placeholder="npr. korisnik@mail.com" required />
+                <small class="hint">Obavezno polje</small>
+              </div>
+            </div>
 
-// autoplay
-let autoplay = null;
-function startAutoplay() {
-  stopAutoplay();
-  autoplay = setInterval(() => goTo(current + 1), 5000);
-}
-function stopAutoplay() {
-  if (autoplay) clearInterval(autoplay);
-  autoplay = null;
-}
-startAutoplay();
+            <div class="form__footer">
+              <label class="check">
+                <input id="saglasnost" type="checkbox" required />
+                <span>Potvrđujem da su podaci tačni i da pristajem na kontaktiranje.</span>
+              </label>
 
-// pause on hover
-if (sliderRoot) {
-  sliderRoot.addEventListener("mouseenter", stopAutoplay);
-  sliderRoot.addEventListener("mouseleave", startAutoplay);
-}
+              <div class="form__actions">
+                <button class="btn btn--ghost" type="reset">Reset</button>
+                <button class="btn" type="submit">Pošalji prijavu</button>
+              </div>
+            </div>
 
-// ===== Form (EmailJS) =====
-const form = $("#requestForm");
-const alertBox = $("#formAlert");
+            <div class="alert" id="formAlert" role="status" aria-live="polite" hidden></div>
+          </form>
+        </div>
+      </div>
+    </section>
 
-function showAlert(msg, type = "error") {
-  if (!alertBox) return;
-  alertBox.hidden = false;
-  alertBox.classList.remove("is-error", "is-success");
-  alertBox.classList.add(type === "success" ? "is-success" : "is-error");
-  alertBox.textContent = msg;
-}
+    <!-- O NAMA / KONTAKT -->
+    <section class="section" id="o-nama">
+      <div class="container">
+        <div class="section__head">
+          <h2>O nama</h2>
+        </div>
 
-function hideAlert() {
-  if (!alertBox) return;
-  alertBox.hidden = true;
-  alertBox.textContent = "";
-  alertBox.classList.remove("is-error", "is-success");
-}
+        <div class="aboutGrid">
+          <div class="card">
+            <h3>Ko smo mi ?</h3>
+            <p>
+              Mi smo tim iskusnih zdravstvenih radnika i njegovateljica
+              koji sa puno strpljenja, razumijevanja i odgovornosti pružaju njegu starijim osobama u njihovom domu.
+              Znamo koliko je povjerenje važno kada je zdravlje u pitanju, zato radimo diskretno, savjesno i s posebnim naglaskom na dostojanstvo i sigurnost svake osobe.
+              Svaki korisnik ima individualan pristup i pažnju kakvu zaslužuje.
+            </p>
+            <ul class="list">
+              <li>Rad po dogovoru</li>
+              <li>Samo za teritoriju Podgorice</li>
+            </ul>
+          </div>
 
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
+          <div class="card">
+            <h3>Kontakt</h3>
+            <div class="contactBox">
+              <div class="contactRow">
+                <span class="k">Telefon</span>
+                <a class="v" href="tel:+38268110564">+382 68 110 564</a>
+              </div>
+              <div class="contactRow">
+                <span class="k">Email</span>
+                <a class="v" href="mailto:zdravljenjega@gmail.com">zdravljenjega@gmail.com</a>
+              </div>
+              <div class="contactRow">
+                <span class="k">Adresa</span>
+                <span class="v">Podgorica, Crna Gora</span>
+              </div>
+              <div class="contactRow">
+                <span class="k">Radno vrijeme</span>
+                <span class="v">Po dogovoru</span>
+              </div>
+            </div>
 
-if (form) {
-  form.addEventListener("reset", () => hideAlert());
+            <div style="margin-top: 20px;"></div>
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    hideAlert();
+            <button class="btn btn--ghost" id="backToTop" type="button">Nazad na vrh</button>
+          </div>
+        </div>
 
-    const data = new FormData(form);
-    const ime = (data.get("ime") || "").toString().trim();
-    const prezime = (data.get("prezime") || "").toString().trim();
-    const trajanje = (data.get("trajanje") || "").toString().trim();
-    const datum = (data.get("datum") || "").toString().trim();
-    const telefon = (data.get("telefon") || "").toString().trim();
-    const email = (data.get("email") || "").toString().trim();
-    const saglasnost = $("#saglasnost")?.checked;
+        <footer class="footer">
+          <p>© <span id="year"></span> Zdravlje i njega. Sva prava zadržana.</p>
+        </footer>
+      </div>
+    </section>
+  </main>
 
-    const missing = [];
-    if (!ime) missing.push("ime");
-    if (!prezime) missing.push("prezime");
-    if (!trajanje) missing.push("trajanje");
-    if (!datum) missing.push("datum");
-    if (!telefon) missing.push("telefon");
-    if (!email) missing.push("email");
-    if (!saglasnost) missing.push("saglasnost");
+  <script src="script.js"></script>
+</body>
 
-    if (missing.length) {
-      showAlert("Molim popuni sva obavezna polja i označi saglasnost.", "error");
-      return;
-    }
-    if (!isValidEmail(email)) {
-      showAlert("Unesi ispravnu email adresu.", "error");
-      return;
-    }
-
-    // EmailJS mora biti inicijalizovan u HTML-u (emailjs.init)
-    emailjs
-      .send("TVOJ_SERVICE_ID", "TVOJ_TEMPLATE_ID", {
-        ime,
-        prezime,
-        trajanje,
-        datum,
-        telefon,
-        email,
-      })
-      .then(() => {
-        showAlert("Prijava je uspješno poslata.", "success");
-        form.reset();
-      })
-      .catch(() => {
-        showAlert("Greška pri slanju emaila.", "error");
-      });
-  });
-}
+</html>
